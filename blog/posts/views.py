@@ -31,3 +31,25 @@ def post_list_view(request, *args, **kwargs):
     qs = Post.objects.all()
     serializedPosts = PostSerializer(qs, many=True)
     return Response(serializedPosts.data, status=200)
+
+@api_view(['GET'])
+def post_detail_view(request, post_id, *args, **kwargs):
+    qs = Post.objects.filter(id = post_id)
+    if not qs.exists():
+        return Response({},status=404)
+    obj = qs.first()
+    serialisedPost = PostSerializer(obj)
+    return Response(serialisedPost.data, status=200)
+
+@api_view(['DELETE','POST'])
+# @authentication_classes([SessionAuthentication]) # by default in rest_framework
+# @permission_classes([IsAuthenticated])
+def post_delete_view(request, post_id, *args, **kwargs):
+    qs = Post.objects.filter(id = post_id)
+    if not qs.exists():
+        return Response({},status=404)
+    if request.user != qs.first().user:
+        return Response({'message':"unauthorised"},status=403)
+    obj = qs.first()
+    obj.delete()
+    return Response({"message":"Post Removed"}, status=200)

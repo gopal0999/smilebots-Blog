@@ -19,14 +19,15 @@ class PostCreateSerializer(serializers.ModelSerializer):
         return value
 
 class PostSerializer(serializers.ModelSerializer):
-    likes = serializers.SerializerMethodField(read_only=True)
-
+    likes = serializers.SerializerMethodField(read_only = True)
+    # user = serializers.SerializerMethodField(read_only = True)
     class Meta:
         model = Post
-        fields = ['id','content','likes','title']
+        fields = ['id','content','likes','title','image','user']
 
     def get_likes(self,obj):
         return obj.likes.count()
+
 
 class PostActionSerializer(serializers.Serializer):
     id = serializers.IntegerField()
